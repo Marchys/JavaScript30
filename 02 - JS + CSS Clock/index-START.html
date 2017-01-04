@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS + CSS Clock</title>
 </head>
+
 <body>
 
 
-    <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
-      </div>
+  <div class="clock">
+    <div class="clock-face">
+      <div class="hand hour-hand"></div>
+      <div class="hand min-hand"></div>
+      <div class="hand second-hand"></div>
     </div>
+  </div>
 
 
   <style>
@@ -53,6 +55,7 @@
       width: 100%;
       height: 100%;
       transform: translateY(-3px); /* account for the height of the clock hands */
+      transform: rotate(90deg); /* rotate so its not on the side */
     }
 
     .hand {
@@ -60,14 +63,42 @@
       height:6px;
       background:black;
       position: absolute;
+      display: flex;
       top:50%;
+      transform-origin: 100%;
+      transition: all 0.05s;
+      transition-timing-function: cubic-bezier(1, 2.79, 1, 1);
+    }
+
+    .second-hand{
+      background:red;
+      height:3px;
     }
 
   </style>
 
-  <script>
+<script>
 
+  const representDate = (date, timeHands) => {
+    const seconds = date.getSeconds();
+    const secondsDegrees = ((seconds / 60) * 360);
+    timeHands.secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
 
-  </script>
+    const minutes = date.getMinutes();
+    const oneMinuteDegrees = 6;
+    const minutesDegrees = minutes * oneMinuteDegrees + ((seconds / 60) * oneMinuteDegrees);
+    timeHands.minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+
+    const hour = date.getHours();
+    const oneHourDegrees = 30;
+    const hoursDegrees = hour * oneHourDegrees + ((minutes / 60) * oneHourDegrees);
+    timeHands.hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+  }
+
+  const [hourHand, minuteHand, secondHand] = [...document.querySelectorAll('[class~=hand]')];
+  window.setInterval(() => representDate(new Date(), { hourHand, minuteHand, secondHand }), 1000);
+
+</script>
 </body>
+
 </html>
